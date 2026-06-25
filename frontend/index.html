@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myntra For Bharat — Wardrobe Planner</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <span class="logo-m">Myntra</span>
+                <span class="logo-divider">|</span>
+                <span class="logo-bharat">Bharat Wardrobe Planner</span>
+            </div>
+            <div class="user-profile">
+                <div class="phone-display">📞 +91 98765 43210</div>
+                <div class="auth-status">Verified Bharat Member</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-body">
+        <!-- Column 1: Wardrobe Selector -->
+        <section class="panel wardrobe-panel">
+            <div class="panel-header">
+                <h2>Almari (My Wardrobe)</h2>
+                <p class="panel-subtitle">Items you already own</p>
+            </div>
+            
+            <div class="category-tabs">
+                <button class="cat-tab active" data-category="all">All</button>
+                <button class="cat-tab" data-category="kurta">Kurtas</button>
+                <button class="cat-tab" data-category="bottom">Bottoms</button>
+                <button class="cat-tab" data-category="dupatta">Dupattas</button>
+                <button class="cat-tab" data-category="accessory">Jewelry/Bags</button>
+                <button class="cat-tab" data-category="footwear">Footwear</button>
+            </div>
+
+            <div class="items-grid" id="wardrobe-items-grid">
+                <!-- Wardrobe items injected by JS -->
+                <div class="loading-spinner">Lacing up your closet...</div>
+            </div>
+        </section>
+
+        <!-- Column 2: Silhouette Canvas & Explanation -->
+        <section class="panel canvas-panel">
+            <div class="score-header">
+                <div class="gauge-container">
+                    <div class="gauge-ring">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="gauge-track" cx="50" cy="50" r="45"></circle>
+                            <circle class="gauge-fill" id="gauge-fill" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="283"></circle>
+                        </svg>
+                        <div class="gauge-value" id="gauge-value">--</div>
+                    </div>
+                    <div class="gauge-label">
+                        <h4 id="gauge-vibe">Choose items</h4>
+                        <p>Outfit Vibe Score</p>
+                    </div>
+                </div>
+                <button class="btn btn-save" id="btn-save-outfit" disabled>Save Look</button>
+            </div>
+
+            <!-- Mannequin Container -->
+            <div class="mannequin-container">
+                <svg id="mannequin-svg" viewBox="0 0 400 600" width="100%" height="100%">
+                    <defs>
+                        <!-- Bandhani Dupatta Pattern Simulation -->
+                        <radialGradient id="bandhani" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#FF5733" />
+                            <stop offset="50%" stop-color="#FFC300" />
+                            <stop offset="100%" stop-color="#C70039" />
+                        </radialGradient>
+                    </defs>
+                    
+                    <!-- Human Silhouette -->
+                    <g id="body-silhouette">
+                        <!-- Head -->
+                        <circle cx="200" cy="70" r="24" fill="#E8D3C5" stroke="#D3B7A6" stroke-width="1.5"/>
+                        <!-- Neck -->
+                        <path d="M192,93 L208,93 L205,115 L195,115 Z" fill="#E8D3C5" stroke="#D3B7A6" stroke-width="1.5"/>
+                        <!-- Shoulders / Torso -->
+                        <path d="M140,120 Q125,120 135,140 L165,240 Q200,250 235,240 L265,140 Q275,120 260,120 Z" fill="#E8D3C5" stroke="#D3B7A6" stroke-width="1.5"/>
+                        <!-- Arms -->
+                        <!-- Left Arm -->
+                        <path d="M135,130 Q110,180 115,250 Q115,260 123,258 Q128,250 127,220 L145,140 Z" fill="#E8D3C5"/>
+                        <!-- Right Arm -->
+                        <path d="M265,130 Q290,180 285,250 Q285,260 277,258 Q272,250 273,220 L255,140 Z" fill="#E8D3C5"/>
+                        <!-- Hips & Legs -->
+                        <path d="M165,240 L155,300 Q145,340 150,420 L165,520 Q170,530 178,525 Q180,515 178,440 L195,310 L205,310 L222,440 Q220,515 222,525 Q230,530 235,520 L250,420 Q255,340 245,300 L235,240 Z" fill="#E8D3C5" stroke="#D3B7A6" stroke-width="1.5"/>
+                    </g>
+                    
+                    <!-- Bottom Layer (Palazzo / Jeans) -->
+                    <g id="layer-bottom" class="svg-layer hidden">
+                        <!-- Straight Pants / Jeans -->
+                        <path id="shape-jeans" class="hidden" d="M165,240 L152,320 L158,420 L168,522 L196,522 L198,310 L202,310 L204,522 L232,522 L242,420 L248,320 L235,240 Z" fill="#2B3E5C" stroke="#1E2F4A" stroke-width="1"/>
+                        <!-- Flared Palazzo / Salwar -->
+                        <path id="shape-palazzo" class="hidden" d="M165,240 L140,320 L125,440 L140,522 L195,522 L198,320 L202,320 L205,522 L260,522 L275,440 L260,320 L235,240 Z" fill="#F8F9FA" stroke="#E2E8F0" stroke-width="1"/>
+                    </g>
+
+                    <!-- Kurta Layer -->
+                    <g id="layer-kurta" class="svg-layer hidden">
+                        <!-- Straight Kurta Shape -->
+                        <path id="shape-kurta-straight" class="hidden" d="M140,120 L128,135 L125,170 Q130,172 135,160 L145,145 L158,240 L145,330 L145,430 L255,430 L255,330 L242,240 L255,145 L265,160 Q270,172 275,170 L272,135 L260,120 L200,135 Z" fill="#E1AD01" stroke="#C59700" stroke-width="1"/>
+                        <!-- Flared Anarkali Shape -->
+                        <path id="shape-kurta-anarkali" class="hidden" d="M140,120 L128,135 L125,185 Q130,187 135,175 L145,145 L158,230 Q120,330 95,440 L305,440 Q280,330 242,230 L255,145 L265,175 Q270,187 275,185 L272,135 L260,120 L200,135 Z" fill="#990012" stroke="#7A000E" stroke-width="1"/>
+                    </g>
+
+                    <!-- Dupatta Layer -->
+                    <g id="layer-dupatta" class="svg-layer hidden">
+                        <!-- Dupatta draped over one shoulder cascading down -->
+                        <path d="M130,120 Q120,160 115,220 Q110,290 120,360 Q125,420 135,460 L155,460 Q145,380 135,280 Q135,180 145,120 Z" fill="#B22222" opacity="0.9"/>
+                        <!-- Cross chest elegant folds -->
+                        <path d="M145,120 Q190,170 255,145 Q260,140 262,132 Q200,150 140,120 Z" fill="#B22222" opacity="0.85"/>
+                    </g>
+
+                    <!-- Jewelry (Earrings) Layer -->
+                    <g id="layer-accessory" class="svg-layer hidden">
+                        <!-- Left Earring (Jhumka style) -->
+                        <g transform="translate(172, 80)">
+                            <line x1="0" y1="0" x2="0" y2="12" stroke="#FFD700" stroke-width="1.5"/>
+                            <path d="M-6,12 L6,12 L4,22 L-4,22 Z" fill="#FFD700"/>
+                            <circle cx="-3" cy="24" r="1.2" fill="#FFFFF0"/>
+                            <circle cx="0" cy="25" r="1.2" fill="#FFFFF0"/>
+                            <circle cx="3" cy="24" r="1.2" fill="#FFFFF0"/>
+                        </g>
+                        <!-- Right Earring -->
+                        <g transform="translate(228, 80)">
+                            <line x1="0" y1="0" x2="0" y2="12" stroke="#FFD700" stroke-width="1.5"/>
+                            <path d="M-6,12 L6,12 L4,22 L-4,22 Z" fill="#FFD700"/>
+                            <circle cx="-3" cy="24" r="1.2" fill="#FFFFF0"/>
+                            <circle cx="0" cy="25" r="1.2" fill="#FFFFF0"/>
+                            <circle cx="3" cy="24" r="1.2" fill="#FFFFF0"/>
+                        </g>
+                    </g>
+
+                    <!-- Footwear Layer -->
+                    <g id="layer-footwear" class="svg-layer hidden">
+                        <!-- Left Jutti -->
+                        <path d="M158,520 Q160,535 178,532 Q183,525 178,515 Z" fill="#CD853F" stroke="#8B5A2B" stroke-width="1"/>
+                        <!-- Right Jutti -->
+                        <path d="M242,520 Q240,535 222,532 Q217,525 222,515 Z" fill="#CD853F" stroke="#8B5A2B" stroke-width="1"/>
+                    </g>
+                </svg>
+                
+                <div class="empty-canvas-message" id="empty-canvas-msg">
+                    <p>✨ Touch wardrobe items on the left to drape them onto the silhouette.</p>
+                </div>
+            </div>
+
+            <!-- "Why It Works" AI style block -->
+            <div class="style-explanation-card">
+                <h3>💡 Why It Works (AI Style Logic)</h3>
+                <p id="explanation-text" class="explanation-text">
+                    Assemble at least a Kurta and Bottom to get a personalized style lesson explaining color harmony and cultural suitability.
+                </p>
+                <div class="style-bullets" id="style-bullets">
+                    <!-- Dynamic fashion tokens -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Column 3: Recommendations, Photo Match & Saved Outfits -->
+        <section class="panel tools-panel">
+            <div class="tab-header">
+                <button class="tool-tab active" data-tab="complete">Complete Look</button>
+                <button class="tool-tab" data-tab="buys">Smart Buys</button>
+                <button class="tool-tab" data-tab="upload">Upload & Match</button>
+                <button class="tool-tab" data-tab="saved">Saved Looks</button>
+            </div>
+
+            <!-- Tab Content 1: Complete the Look -->
+            <div class="tab-content active" id="tab-complete">
+                <div class="tool-intro">
+                    <h3>Occasion Builder</h3>
+                    <div class="occasion-selector-group">
+                        <label for="occasion-select">Dressing for:</label>
+                        <select id="occasion-select" class="select-input">
+                            <option value="festive">Festive (Diwali, Eid, Puja)</option>
+                            <option value="wedding">Wedding (Haldi, Mehendi, Reception)</option>
+                            <option value="office">Office / Smart Casual</option>
+                            <option value="daily" selected>Daily Wear / Outing</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="recommendations-container">
+                    <h4>Add these to complete your look:</h4>
+                    <div class="recs-list" id="complete-recs-list">
+                        <div class="empty-state">Select items in the wardrobe first to see matching suggestions.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content 2: Smart Buy Suggestions -->
+            <div class="tab-content" id="tab-buys">
+                <div class="tool-intro">
+                    <h3>Value-Based Recommendations</h3>
+                    <p>Based on your purchase history, these high-value items multiply the outfit combinations you can make with what you already own.</p>
+                </div>
+                
+                <div class="recs-list" id="smart-buys-list">
+                    <div class="loading-spinner">Analyzing your previous orders...</div>
+                </div>
+            </div>
+
+            <!-- Tab Content 3: Upload & Match -->
+            <div class="tab-content" id="tab-upload">
+                <div class="tool-intro">
+                    <h3>Computer Vision Styling</h3>
+                    <p>Upload a screenshot from Instagram or a photo of a piece you saw to match it against your Almari wardrobe.</p>
+                </div>
+
+                <div class="upload-dropzone" id="upload-dropzone">
+                    <input type="file" id="photo-upload-input" accept="image/*" style="display:none">
+                    <div class="upload-inner">
+                        <span class="upload-icon">📸</span>
+                        <p class="upload-prompt">Click or Tap to upload clothing photo</p>
+                        <span class="upload-help">Supports JPG, PNG</span>
+                    </div>
+                </div>
+
+                <!-- CV Result Panel -->
+                <div class="cv-results-card hidden" id="cv-results-card">
+                    <div class="cv-grid">
+                        <div class="cv-img-preview">
+                            <img id="cv-preview-img" src="" alt="Uploaded source">
+                        </div>
+                        <div class="cv-tags">
+                            <h4>AI Inferred Attributes:</h4>
+                            <div class="tags-row" id="cv-attribute-tags">
+                                <!-- Tags injected by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-matches">
+                        <h4>Matches In Your Wardrobe:</h4>
+                        <div class="recs-list" id="cv-wardrobe-matches">
+                            <!-- Injected by JS -->
+                        </div>
+                        
+                        <h4 class="mt-4">Missing This? Buy on Myntra:</h4>
+                        <div class="recs-list" id="cv-buy-matches">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content 4: Saved Looks -->
+            <div class="tab-content" id="tab-saved">
+                <div class="tool-intro">
+                    <h3>Your Wardrobe Book</h3>
+                    <p>Quick access to your curated looks.</p>
+                </div>
+                <div class="recs-list" id="saved-outfits-list">
+                    <div class="empty-state">No saved outfits yet. Assemble your first look and click "Save Look"!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Toast -->
+    <div class="toast hidden" id="toast-msg">Saved successfully!</div>
+
+    <!-- Script file -->
+    <script src="app.js"></script>
+</body>
+</html>
